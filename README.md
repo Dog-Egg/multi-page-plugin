@@ -31,11 +31,14 @@ project
 const MultiPagePlugin = require('multi-page-plugin');
 const path = require('path');
 
+const multiPagePlugin = new MultiPagePlugin({
+    context: path.resolve(__dirname, 'src')
+})
+
 module.exports = {
+    entry: multiPagePlugin.entry,
     plugins: [
-        new MultiPagePlugin({
-            context: path.resolve(__dirname, 'src')
-        })
+        multiPagePlugin
     ],
     output: {
         path: path.resolve(__dirname, 'dist'),
@@ -57,6 +60,29 @@ dist
 └── page2.html
 ```
 
+## page.config.js
+```javascript
+module.exports = {
+    // 页面入口点文件名称（相对于 page.config.js）
+    //
+    // 默认值：'index.js' 
+    entry: 'main.js',
+
+    // 跳过创建当前页面
+    //
+    // 默认值：false
+    deprecated: true,
+
+    // 与 HtmlWebpackPlugin.Options 一致
+    //
+    // https://github.com/jantimon/html-webpack-plugin#options
+    //
+    htmlOptions: {
+        ...
+    } 
+}
+```
+
 ## 参数选项
 ```javascript
 new MultiPagePlugin({
@@ -76,29 +102,14 @@ new MultiPagePlugin({
     // default: 'page~'
     chunkNamePrefix: 'custom~',
 
-    // 页面配置默认选项
+    // configFile 全局选项
     config: {
-        // 页面入口点文件名称（相对与页面配置文件所在目录）
-        //
-        // 默认值：'index.js'
-        entry: 'main.js',
-
-        // 跳过创建当前页面
-        //
-        // 默认值：false
-        deprecated: true,
-
-        // 创建 html-webpack-plugin 对象时所传递的选项
-        //
-        // 详细查看：https://github.com/jantimon/html-webpack-plugin#options
-        //
+        entry: main.js,
         htmlOptions: {
-            // multi-page-plugin 会默认设置 filename, excludeChunks, chunksSortMode
+            title: 'Default Title',
             ...
-        }
+        },
+        ...
     }
 })
 ```
-
-## 页面配置文件
-当前页面配置选项，需要导出一个对象，选项同 MultiPagePlugin 构造参数 options.config。
